@@ -12,3 +12,7 @@ RUN apk --update add openjdk8 && \
     mkdir /models && \
     curl -L http://www.ark.cs.cmu.edu/SEMAFOR/semafor_malt_model_20121129.tar.gz | tar xzv -C /models && \
     apk del build-dependencies 
+
+COPY ./config.sh /semafor-master/bin/config.sh
+
+RUN chmod +rwx /semafor-master/bin/config.sh
