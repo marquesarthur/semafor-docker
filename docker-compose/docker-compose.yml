@@ -1,0 +1,17 @@
+semafor-rest:
+  image: msarthur/semafor-rest:latest
+  mem_limit: 1000000000
+  cpu_shares: 128
+  restart: always
+  ports:
+    - "5000:5000"
+  links:
+    - "semafor-frameparser:frameparser"
+  expose:
+    - "5000"
+semafor-frameparser:
+  image: msarthur/semafor-frameparser:latest
+  mem_limit: 4400000000
+  cpu_shares: 128
+  expose:
+    - "8085"
