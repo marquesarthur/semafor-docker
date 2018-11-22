@@ -11,11 +11,15 @@ services:
     expose:
       - "5000"
     network_mode: "host"
+    environment:
+      - DOCKER_HOST=192.168.99.100
     deploy:
       resources:
         limits:
           cpus: '128'
           memory: '1G'
+    depends_on:
+      - db
   semafor-frameparser:
     image: msarthur/semafor-frameparser:latest
     container_name: semafor-frameparser
@@ -29,3 +33,12 @@ services:
         limits:
           cpus: '128'
           memory: '4GB'
+  db:
+    image: mongo
+    container_name: semafor-database
+    network_mode: "host"
+    user: root
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
