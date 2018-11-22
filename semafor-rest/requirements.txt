@@ -6,3 +6,4 @@ Jinja2==2.6
 WTForms==1.0.2
 Werkzeug==0.8.3
 wsgiref==0.1.2
+pymongo==3.7.2

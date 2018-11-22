@@ -12,11 +12,22 @@ from flask.ext.wtf import Form, TextAreaField, Required
 sys.path.append(os.getcwd())  # I thought this happened by default?
 
 from semviz.services import PosTagger, SemaforClient, MaltClient
+from semviz.mock import DB_SENTENCE_1, DB_SENTENCE_2, DB_SENTENCE_3
+from semviz.settings import CACHE_RESULTS, MONGO_HOST, MONGO_PORT
 
+from pymongo import MongoClient
 
 app = Flask(__name__)
 
 SEMAFOR_CLIENT = SemaforClient.create(MaltClient())
+
+# http://containertutorials.com/docker-compose/flask-mongo-compose.html#dockerfile
+# https://www.thachmai.info/2015/04/30/running-mongodb-container/
+mongo_client = None
+if CACHE_RESULTS:
+    mongo_client = MongoClient(MONGO_HOST,
+                               MONGO_PORT)
+    db = mongo_client.semafordb
 
 
 class SentenceInputForm(Form):
@@ -26,12 +37,24 @@ class SentenceInputForm(Form):
 @app.route("/api/v1/parse")
 def parse():
     text = request.args.get('sentence', '')
+    if CACHE_RESULTS:
+        cached_response = db.parsed_frames.find_one({"sentence": text})
+        if cached_response:
+            return jsonify(cached_response["frames"])
+
     response = SEMAFOR_CLIENT.get_parses(text.split(u'\n'))
+
+    if CACHE_RESULTS:
+        db.parsed_frames.insert({"sentence": text, "frames": response})
+
+
     return jsonify(response)
+
 
 @app.route('/about.html')
 def about():
     return render_template('about.html')
+
 
 @app.route("/")
 def home():
@@ -41,4 +64,3 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
-
