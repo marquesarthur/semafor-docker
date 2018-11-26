@@ -16,6 +16,7 @@ from semviz.mock import DB_SENTENCE_1, DB_SENTENCE_2, DB_SENTENCE_3
 from semviz.settings import CACHE_RESULTS, MONGO_HOST, MONGO_PORT
 
 from pymongo import MongoClient
+from pymongo import TEXT
 
 app = Flask(__name__)
 
@@ -28,6 +29,8 @@ if CACHE_RESULTS:
     mongo_client = MongoClient(MONGO_HOST,
                                MONGO_PORT)
     db = mongo_client.semafordb
+
+    db.parsed_frames.create_index([('sentence', TEXT)], name='sentence_text', default_language='english')
 
 
 class SentenceInputForm(Form):
