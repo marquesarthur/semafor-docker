@@ -38,15 +38,19 @@ class SentenceInputForm(Form):
 def parse():
     text = request.args.get('sentence', '')
     if CACHE_RESULTS:
-        cached_response = db.parsed_frames.find_one({"sentence": text})
+        cached_response = db.parsed_frames.find({
+            "$text": {
+                "$search": text
+            }
+        })
         if cached_response:
-            return jsonify(cached_response["frames"])
+            result = next(iter(cached_response))
+            return jsonify(result["frames"])
 
     response = SEMAFOR_CLIENT.get_parses(text.split(u'\n'))
 
     if CACHE_RESULTS:
         db.parsed_frames.insert({"sentence": text, "frames": response})
-
 
     return jsonify(response)
 
