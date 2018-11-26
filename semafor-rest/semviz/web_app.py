@@ -46,7 +46,7 @@ def parse():
                 "$search": text
             }
         })
-        if cached_response:
+        if cached_response and cached_response.count() > 0:
             result = next(iter(cached_response))
             return jsonify(result["frames"])
 
