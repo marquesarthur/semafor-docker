@@ -41,14 +41,21 @@ class SentenceInputForm(Form):
 def parse():
     text = request.args.get('sentence', '')
     if CACHE_RESULTS:
+        query = '\"' + '\" \"'.join(text.split(' ')) + '\"' # https://stackoverflow.com/questions/16902674/mongodb-text-search-and-multiple-search-words
         cached_response = db.parsed_frames.find({
             "$text": {
-                "$search": text
+                "$search": query
             }
         })
         if cached_response and cached_response.count() > 0:
-            result = next(iter(cached_response))
-            return jsonify(result["frames"])
+            if cached_response.count() == 1:
+                result = next(iter(cached_response))
+                return jsonify(result["frames"])
+            else:
+                result = [c for c in cached_response if c['sentence'] == text]
+                if result:
+                    result = next(iter(result))
+                    return jsonify(result["frames"])
 
     response = SEMAFOR_CLIENT.get_parses(text.split(u'\n'))
 
@@ -71,3 +78,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
+
