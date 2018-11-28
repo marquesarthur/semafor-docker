@@ -12,7 +12,7 @@ services:
       - "5000"
     network_mode: "host"
     environment:
-      - DOCKER_HOST=192.168.99.100
+      - DOCKER_HOST=localhost
     deploy:
       resources:
         limits:
