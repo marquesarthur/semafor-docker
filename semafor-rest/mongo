@@ -1,0 +1,19 @@
+# Check for duplicates
+# db.parsed_frames.aggregate(
+#     {"$group" : { "_id": "$sentence", "count": { "$sum": 1 } } },
+#     {"$match": {"_id" :{ "$ne" : null } , "count" : {"$gt": 1} } },
+#     {"$project": {"sentence" : "$_id", "_id" : 0} }
+# )
+
+# Remove duplicates
+# db.parsed_frames.aggregate(
+#     [
+#         { "$sort": { "_id": 1 } },
+#         { "$group": {
+#             "_id": "$asin",
+#             "doc": { "$first": "$$ROOT" }
+#         }},
+#         { "$replaceRoot": { "newRoot": "$doc" } },
+#         { "$out": "parsed_frames" }
+#     ]
+# )
