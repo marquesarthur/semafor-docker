@@ -41,12 +41,13 @@ class SentenceInputForm(Form):
 def parse():
     text = request.args.get('sentence', '')
     if CACHE_RESULTS:
+        query = '\"' + '\" \"'.join(text.split(' ')) + '\"' # https://stackoverflow.com/questions/16902674/mongodb-text-search-and-multiple-search-words
         cached_response = db.parsed_frames.find({
             "$text": {
-                "$search": text
+                "$search": query
             }
         })
-        if cached_response and cached_response.count() > 0:
+        if cached_response and cached_response.count() == 1:
             result = next(iter(cached_response))
             return jsonify(result["frames"])
 
