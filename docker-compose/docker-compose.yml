@@ -13,6 +13,7 @@ services:
     network_mode: "host"
     environment:
       - DOCKER_HOST=localhost
+      - CACHE_RESULTS=false
     deploy:
       resources:
         limits:
