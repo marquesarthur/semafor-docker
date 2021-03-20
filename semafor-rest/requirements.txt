@@ -2,7 +2,7 @@ mock==1.0.1
 nose==1.2.1
 Flask==0.9
 Flask-WTF==0.8
-Jinja2==2.6
+Jinja2==2.11.3
 WTForms==1.0.2
 Werkzeug==0.8.3
 wsgiref==0.1.2
